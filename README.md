@@ -83,6 +83,8 @@ Run the following command to install the Git hooks defined in this project:
 lefthook install
 ```
 
+This will set up the pre-commit hook to run commands before each commit. See on `lefthook.yml` for more details.
+
 ## Some planned features and TODOs
 - Add unit and integration tests.
 - Implement more advanced features like role-based access control.
