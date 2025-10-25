@@ -46,7 +46,7 @@ To get started with the rubete API, follow these steps:
 
 5. Run the application:
    ```bash
-cargo run
+   cargo run
    ```
 6. The API will be available at `http://localhost:9000` (or the port you specified in the `.env` file).
 
