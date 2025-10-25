@@ -1,5 +1,6 @@
 use dotenvy::dotenv;
 use std::env;
+mod entity;
 mod handlers;
 mod server;
 mod utils;
