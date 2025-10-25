@@ -1,4 +1,5 @@
 use crate::handlers::echo::echo;
+use crate::handlers::health_check::health_check;
 use crate::handlers::home::home;
 use crate::handlers::manual_hello::manual_hello;
 use ntex::web::{self, App, HttpServer};
@@ -9,6 +10,7 @@ pub async fn run_server(app_port: u16, db: DbConn) -> std::io::Result<()> {
         App::new()
             .state(db.clone()) // Add DbConn to app state
             .service(home)
+            .service(health_check)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
     })
