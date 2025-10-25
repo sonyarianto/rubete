@@ -1,18 +1,17 @@
-use crate::handlers::echo::echo;
-use crate::handlers::health_check::health_check;
-use crate::handlers::home::home;
-use crate::handlers::manual_hello::manual_hello;
-use ntex::web::{self, App, HttpServer};
+use crate::handlers::{health_check::health_check, home::home, user::create_user};
+use ntex::web;
+use ntex::web::{App, HttpServer};
 use sea_orm::DbConn;
 
 pub async fn run_server(app_port: u16, db: DbConn) -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .state(db.clone()) // Add DbConn to app state
+            // Root routes
             .service(home)
             .service(health_check)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            // v1 scope
+            .service(web::scope("/v1").service(create_user).service(home))
     })
     .bind(("0.0.0.0", app_port))?
     .run()
