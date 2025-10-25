@@ -5,7 +5,7 @@ Hi! rubete is short for "Rust backend template". It is a boilerplate backend API
 ## Features
 
 - User authentication and management.
-- Connection to MySQL database using Diesel.
+- Connection to MySQL database. Using SeaORM as the ORM layer.
 - Easy to understand and extend, as long as you follow the existing structure and understand Rust and Ntex basics. Everything starts from `main.rs`. The `src` directory contains the core application logic, organized into subdirectories for different modules and functionalities.
 - Environment configuration using `.env` file.
 
