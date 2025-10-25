@@ -71,7 +71,7 @@ cargo install sea-orm-cli
 Then run the following command to generate entities:
 
 ```bash
-sea-orm-cli generate entity -u mysql://username:password@localhost/database_name -o src/entity
+sea-orm-cli generate entity -u mysql://username:password@localhost/database_name -o src/entity --with-serde both
 ```
 
 ## Git hooks
