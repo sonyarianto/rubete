@@ -1,8 +1,11 @@
+use crate::entity::users::{self, ActiveModel};
 use crate::utils::json::check_json_payload;
-use crate::utils::response::send_error;
+use crate::utils::response::{send_error, send_success};
+use crate::utils::security::hash_password;
 use ntex::web;
 use ntex::web::error::JsonPayloadError;
-use ntex::web::types::Json;
+use ntex::web::types::{Json, State};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -24,6 +27,7 @@ pub struct CreateUserRequest {
 #[web::post("/users")]
 pub async fn create_user(
     payload: Result<Json<CreateUserRequest>, JsonPayloadError>,
+    db: State<DatabaseConnection>,
 ) -> impl web::Responder {
     // Handle JSON parsing errors
     let data = match check_json_payload(payload) {
@@ -36,6 +40,48 @@ pub async fn create_user(
         return send_error(422, "validation_error", "Validation failed", Some(errors));
     }
 
-    // Normal success path
-    web::HttpResponse::Ok().json(&data)
+    // Check if user already exists
+    let existing = match users::Entity::find()
+        .filter(users::Column::Email.eq(data.email.clone()))
+        .one(db.get_ref())
+        .await
+    {
+        Ok(user) => user,
+        Err(_) => {
+            return send_error(500, "db_error", "Database error", Option::<()>::None);
+        }
+    };
+
+    if existing.is_some() {
+        return send_error(
+            400,
+            "user_exists",
+            "User already exists",
+            Option::<()>::None,
+        );
+    }
+
+    // Insert new user
+    let new_user = ActiveModel {
+        email: Set(data.email.clone()),
+        password: Set(hash_password(&data.password)),
+        ..Default::default() // fill other fields (like created_at) automatically
+    };
+
+    let inserted_user = match new_user.insert(db.get_ref()).await {
+        Ok(user) => user,
+        Err(_) => {
+            return send_error(
+                500,
+                "insert_failed",
+                "Failed to create user",
+                Option::<()>::None,
+            );
+        }
+    };
+
+    send_success(
+        "User created successfully",
+        serde_json::json!({ "id": inserted_user.id }),
+    )
 }
