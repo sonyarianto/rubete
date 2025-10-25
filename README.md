@@ -60,6 +60,20 @@ Then run:
 cargo watch -x run
 ```
 
+## SeaORM Entity Generation
+
+To generate SeaORM entities from your existing database schema, you can use the `sea-orm-cli` tool. Install it using:
+
+```bash
+cargo install sea-orm-cli
+```
+
+Then run the following command to generate entities:
+
+```bash
+sea-orm-cli generate entity -u mysql://username:password@localhost/database_name -o src/entity
+```
+
 ## Before commit
 - Run `cargo clippy` to catch any potential issues.
 - Ensure all tests are passing.
