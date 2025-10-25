@@ -1,6 +1,6 @@
 # rubete
 
-Hi! rubete is short for "Rust backend template". It is a boilerplate backend API built with Rust and the Ntex web framework. It provides a solid foundation for building RESTful APIs with features like user authentication, database integration, and more.
+Hi! rubete is short for "Rust backend template". It is a boilerplate backend API built with Rust and the Ntex web framework. It provides a solid foundation for building RESTful APIs.
 
 ## Features
 
@@ -60,7 +60,7 @@ Then run:
 cargo watch -x run
 ```
 
-## SeaORM Entity Generation
+## SeaORM entity generation
 
 To generate SeaORM entities from your existing database schema, you can use the `sea-orm-cli` tool. Install it using:
 
@@ -74,12 +74,24 @@ Then run the following command to generate entities:
 sea-orm-cli generate entity -u mysql://username:password@localhost/database_name -o src/entity
 ```
 
-## Before commit
-- Run `cargo clippy` to catch any potential issues.
-- Ensure all tests are passing.
-- Update documentation as needed.
-- Run `cargo fmt` to format the code.
-- Check for any TODOs or FIXMEs in the code.
+## Git hooks
+
+This project using `lefthook` for Git hooks. Follow the instructions at [lefthook installation guide](https://lefthook.dev/installation/go.html).
+
+Run the following command to install the Git hooks defined in this project:
+```bash
+lefthook install
+```
+
+## Some planned features and TODOs
+- Add unit and integration tests.
+- Implement more advanced features like role-based access control.
+- Audit logging and monitoring.
+- Better documentation and examples.
+- Docker support for easier deployment.
+
+## Contributing
+Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
 
 ## Author
 - Sony AK - [sony@sony-ak.com](https://sony-ak.com)
