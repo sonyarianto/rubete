@@ -48,7 +48,7 @@ To get started with the rubete API, follow these steps:
    ```bash
    cargo run
    ```
-6. The API will be available at `http://localhost:9000` (or the port you specified in the `.env` file).
+6. The API will be available at `http://localhost:9001` (or the port you specified in the `.env` file).
 
 ## Hot reload during development
 For development, you can use `cargo-watch` for hot reloading. Install it using:
