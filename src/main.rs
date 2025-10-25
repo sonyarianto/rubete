@@ -2,6 +2,7 @@ use dotenvy::dotenv;
 use std::env;
 mod handlers;
 mod server;
+mod utils;
 use sea_orm::{Database, DbConn};
 use server::run_server;
 
