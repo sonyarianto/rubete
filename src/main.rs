@@ -1,28 +1,10 @@
 use dotenvy::dotenv;
 use ntex::web;
-use serde_json::json;
 use std::env;
-
-#[web::get("/")]
-async fn home() -> impl web::Responder {
-    let app_version = env::var("APP_VERSION").unwrap_or_else(|_| "0.0.1".to_string());
-
-    let body = json!({
-        "data": { "version": app_version },
-        "message": "API is running.",
-        "success": true
-    });
-    web::HttpResponse::Ok().json(&body)
-}
-
-#[web::post("/echo")]
-async fn echo(req_body: String) -> impl web::Responder {
-    web::HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl web::Responder {
-    web::HttpResponse::Ok().body("Hey there!")
-}
+mod handlers;
+use handlers::echo::echo;
+use handlers::home::home;
+use handlers::manual_hello::manual_hello;
 
 #[ntex::main]
 async fn main() -> std::io::Result<()> {
