@@ -6,11 +6,12 @@ use sea_orm::DbConn;
 pub async fn run_server(app_port: u16, db: DbConn) -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
+            // Add DbConn to app state
             .state(db.clone()) // Add DbConn to app state
             // Root routes
             .service(home)
             .service(health_check)
-            // v1 scope
+            // Define /v1 scope
             .service(web::scope("/v1").service(create_user).service(home))
     })
     .bind(("0.0.0.0", app_port))?
