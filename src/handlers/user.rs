@@ -1,5 +1,7 @@
+use crate::utils::json::check_json_payload;
 use crate::utils::response::send_error;
 use ntex::web;
+use ntex::web::error::JsonPayloadError;
 use ntex::web::types::Json;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -20,12 +22,20 @@ pub struct CreateUserRequest {
 }
 
 #[web::post("/users")]
-pub async fn create_user(payload: Json<CreateUserRequest>) -> impl web::Responder {
-    let data = payload.into_inner();
+pub async fn create_user(
+    payload: Result<Json<CreateUserRequest>, JsonPayloadError>,
+) -> impl web::Responder {
+    // Handle JSON parsing errors
+    let data = match check_json_payload(payload) {
+        Ok(v) => v,
+        Err(resp) => return resp,
+    };
 
+    // Run validation when JSON was parsed successfully
     if let Err(errors) = data.validate() {
-        return send_error(400, "VALIDATION_ERROR", "Validation failed", Some(errors));
+        return send_error(422, "validation_error", "Validation failed", Some(errors));
     }
 
+    // Normal success path
     web::HttpResponse::Ok().json(&data)
 }
