@@ -1,7 +1,6 @@
 use dotenvy::dotenv;
 use std::env;
 mod entity;
-mod handlers;
 mod modules;
 mod utils;
 use modules::database::connect_to_mysql_db;
