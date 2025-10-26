@@ -1,3 +1,4 @@
+use crate::modules::database::entity::user_details::{self, Entity as UserDetailsEntity};
 use crate::modules::database::entity::users::{self, Entity as UsersEntity};
 use crate::modules::utils::json::check_json_payload;
 use crate::modules::utils::response::{send_error, send_success};
@@ -64,9 +65,26 @@ pub async fn login_user(
         );
     }
 
+    // Fetch user details
+    let details = match UserDetailsEntity::find()
+        .filter(user_details::Column::UserId.eq(user.id))
+        .one(db.get_ref())
+        .await
+    {
+        Ok(Some(details)) => details,
+        _ => {
+            return send_error(
+                500,
+                "db_error",
+                "Failed to fetch user details",
+                Option::<()>::None,
+            );
+        }
+    };
+
     // You may want to generate a token here (e.g., JWT), but for now just return success
     send_success(
         "Login successful",
-        serde_json::json!({ "id": user.id, "email": user.email }),
+        serde_json::json!({ "id": user.id, "email": user.email, "first_name": details.first_name, "last_name": details.last_name  }),
     )
 }
