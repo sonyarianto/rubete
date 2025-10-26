@@ -1,5 +1,5 @@
-use crate::handlers::{user::create_user};
-use crate::modules::handlers::{home::home, health_check::health_check};
+use crate::handlers::user::create_user;
+use crate::modules::handlers::{health_check::health_check, home::home};
 use ntex::web;
 use ntex::web::{App, HttpServer};
 use sea_orm::DbConn;
