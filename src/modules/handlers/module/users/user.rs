@@ -1,4 +1,4 @@
-use crate::entity::users::{self, ActiveModel};
+use crate::modules::entity::users::{self, ActiveModel};
 use crate::utils::json::check_json_payload;
 use crate::utils::response::{send_error, send_success};
 use crate::utils::security::hash_password;
