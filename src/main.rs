@@ -2,17 +2,10 @@ use dotenvy::dotenv;
 use std::env;
 mod entity;
 mod handlers;
-mod server;
+mod modules;
 mod utils;
-use sea_orm::{Database, DbConn};
-use server::run_server;
-
-async fn connect_to_mysql_db() -> DbConn {
-    let database_url = std::env::var("DB_URL").expect("DB_URL must be set");
-    Database::connect(&database_url)
-        .await
-        .expect("Failed to connect to database")
-}
+use modules::server::run_server;
+use modules::database::connect_to_mysql_db;
 
 #[ntex::main]
 async fn main() -> std::io::Result<()> {
