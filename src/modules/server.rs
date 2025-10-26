@@ -1,5 +1,5 @@
 use crate::modules::handlers::{
-    health_check::health_check, home::home, module::users::user::create_user,
+    health_check::health_check, home::home, module::users::create::create_user,
 };
 use ntex::web;
 use ntex::web::{App, HttpServer};
