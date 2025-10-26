@@ -1,3 +1,4 @@
+use crate::modules::database::entity::activities::ActiveModel as ActivitiesActiveModel;
 use crate::modules::database::entity::user_details::ActiveModel as UserDetailsActiveModel;
 use crate::modules::database::entity::users::{self, ActiveModel as UserActiveModel};
 use crate::modules::utils::json::check_json_payload;
@@ -9,6 +10,7 @@ use ntex::web::types::{Json, State};
 use sea_orm::TransactionTrait;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use validator::Validate;
 
 #[derive(Deserialize, Serialize, Validate)]
@@ -110,6 +112,31 @@ pub async fn create_user(
             500,
             "insert_failed",
             "Failed to create user details",
+            Option::<()>::None,
+        );
+    }
+
+    // Insert audit log into activities table
+    let activity = ActivitiesActiveModel {
+        user_id: Set(inserted_user.id),
+        data_id: Set(inserted_user.id),
+        data_type: Set("user".to_string()),
+        activity_type: Set(Some("create_user".to_string())),
+        activity_description: Set(Some("User account created".to_string())),
+        metadata: Set(Some(json!({
+            "email": data.email,
+            "first_name": data.first_name,
+            "last_name": data.last_name,
+        }))),
+        ..Default::default()
+    };
+
+    if (activity.insert(&txn).await).is_err() {
+        let _ = txn.rollback().await;
+        return send_error(
+            500,
+            "insert_failed",
+            "Failed to create activity log",
             Option::<()>::None,
         );
     }
