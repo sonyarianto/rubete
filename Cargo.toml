@@ -13,3 +13,5 @@ sea-orm = { version = "0.12", features = ["sqlx-mysql", "runtime-tokio-native-tl
 sea-orm-macros = "0.12"
 validator = { version = "0.16", features = ["derive"] }
 bcrypt = "0.15"
+jsonwebtoken = "8"
+chrono = { version = "0.4.42", features = ["serde"] }
