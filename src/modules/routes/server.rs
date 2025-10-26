@@ -1,5 +1,6 @@
 use crate::modules::handlers::{
     health_check::health_check, home::home, module::users::create::create_user,
+    module::users::login::login_user,
 };
 use ntex::web;
 use ntex::web::{App, HttpServer};
@@ -14,7 +15,12 @@ pub async fn run_server(app_port: u16, db: DbConn) -> std::io::Result<()> {
             .service(home)
             .service(health_check)
             // Define /v1 scope
-            .service(web::scope("/v1").service(create_user).service(home))
+            .service(
+                web::scope("/v1")
+                    .service(create_user)
+                    .service(home)
+                    .service(login_user),
+            )
     })
     .bind(("0.0.0.0", app_port))?
     .run()
