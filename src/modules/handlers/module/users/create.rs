@@ -1,7 +1,7 @@
-use crate::modules::entity::users::{self, ActiveModel};
-use crate::utils::json::check_json_payload;
-use crate::utils::response::{send_error, send_success};
-use crate::utils::security::hash_password;
+use crate::modules::database::entity::users::{self, ActiveModel};
+use crate::modules::utils::json::check_json_payload;
+use crate::modules::utils::response::{send_error, send_success};
+use crate::modules::utils::security::hash_password;
 use ntex::web;
 use ntex::web::error::JsonPayloadError;
 use ntex::web::types::{Json, State};

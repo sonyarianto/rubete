@@ -1,4 +1,4 @@
-use crate::utils::response::send_success;
+use crate::modules::utils::response::send_success;
 use ntex::web;
 use serde_json::json;
 use std::env;

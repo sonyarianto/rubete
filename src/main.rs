@@ -1,9 +1,8 @@
 use dotenvy::dotenv;
 use std::env;
 mod modules;
-mod utils;
-use modules::database::connect_to_mysql_db;
-use modules::server::run_server;
+use modules::database::connection::connect_to_mysql_db;
+use modules::routes::server::run_server;
 
 #[ntex::main]
 async fn main() -> std::io::Result<()> {

@@ -1,4 +1,4 @@
-use crate::utils::response::send_error;
+use crate::modules::utils::response::send_error;
 use ntex::web::{HttpResponse, error::JsonPayloadError, types::Json};
 
 /// Generic helper for JSON payload extraction.
