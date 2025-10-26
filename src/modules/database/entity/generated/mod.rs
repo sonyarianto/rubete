@@ -2,6 +2,7 @@
 
 pub mod prelude;
 
+pub mod activities;
 pub mod user_details;
 pub mod user_sessions;
 pub mod users;
