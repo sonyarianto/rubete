@@ -1,10 +1,12 @@
-use crate::modules::database::entity::users::{self, ActiveModel};
+use crate::modules::database::entity::user_details::ActiveModel as UserDetailsActiveModel;
+use crate::modules::database::entity::users::{self, ActiveModel as UserActiveModel};
 use crate::modules::utils::json::check_json_payload;
 use crate::modules::utils::response::{send_error, send_success};
 use crate::modules::utils::security::hash_password;
 use ntex::web;
 use ntex::web::error::JsonPayloadError;
 use ntex::web::types::{Json, State};
+use sea_orm::TransactionTrait;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -61,16 +63,30 @@ pub async fn create_user(
         );
     }
 
-    // Insert new user
-    let new_user = ActiveModel {
-        email: Set(data.email.clone()),
-        password: Set(hash_password(&data.password)),
-        ..Default::default() // fill other fields (like created_at) automatically
+    // Start transaction
+    let txn = match db.get_ref().begin().await {
+        Ok(txn) => txn,
+        Err(_) => {
+            return send_error(
+                500,
+                "db_error",
+                "Failed to start transaction",
+                Option::<()>::None,
+            );
+        }
     };
 
-    let inserted_user = match new_user.insert(db.get_ref()).await {
+    // Insert new user
+    let new_user = UserActiveModel {
+        email: Set(data.email.clone()),
+        password: Set(hash_password(&data.password)),
+        ..Default::default()
+    };
+
+    let inserted_user = match new_user.insert(&txn).await {
         Ok(user) => user,
         Err(_) => {
+            let _ = txn.rollback().await;
             return send_error(
                 500,
                 "insert_failed",
@@ -79,6 +95,26 @@ pub async fn create_user(
             );
         }
     };
+
+    // Insert user details
+    let new_details = UserDetailsActiveModel {
+        user_id: Set(inserted_user.id),
+        first_name: Set(data.first_name.clone()),
+        last_name: Set(data.last_name.clone()),
+        ..Default::default()
+    };
+
+    if (new_details.insert(&txn).await).is_err() {
+        let _ = txn.rollback().await;
+        return send_error(
+            500,
+            "insert_failed",
+            "Failed to create user details",
+            Option::<()>::None,
+        );
+    }
+
+    let _ = txn.commit().await;
 
     send_success(
         "User created successfully",
