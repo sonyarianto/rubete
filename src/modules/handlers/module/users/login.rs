@@ -186,11 +186,13 @@ pub async fn login_user(
     if session_mode == "jwt_server_stateful" {
         // Here you would typically store the JTI in the database associated with the user
         // For brevity, this part is omitted
+        // TODO: Implement storing JTI in UserSession table
     }
 
     // Create cookie called refresh_token with HttpOnly and Secure flags
     // Note: In a real application, you would set this cookie in the HTTP response headers
     // For brevity, this part is omitted
+    // TODO: Set refresh_token cookie in response, maybe using ntex-session?
 
     send_success(
         "Login successful",
